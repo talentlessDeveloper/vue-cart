@@ -44,11 +44,29 @@ const router = useRouter();
           />
         </div>
       </div>
+      <div class="message container">
+        <p>
+          <span>Notice!</span>
+          As a result of using localstorage,your browser might scream your
+          password is insecure, do not fret , just ignore it.
+        </p>
+      </div>
     </section>
   </main>
 </template>
 
 <style scoped>
+.message {
+  margin-block: 24px;
+  max-width: 400px;
+}
+
+.message span {
+  color: var(--accentClr);
+  font-size: 1.75rem;
+  margin-right: 6px;
+}
+
 section {
   margin-top: 112px;
 }
