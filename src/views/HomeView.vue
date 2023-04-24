@@ -111,7 +111,8 @@ h1 > span:nth-of-type(2) {
   inset: 0;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 1;
-  animation: scale-in 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  transform-origin: 0% 0%;
+  animation: scale-in 5s cubic-bezier(0.39, 0.575, 0.565, 1) both;
   animation-delay: calc(0.75 * var(--d));
 }
 
