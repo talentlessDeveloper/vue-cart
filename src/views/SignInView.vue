@@ -1,22 +1,33 @@
 <script setup>
-import { storeToRefs } from "pinia";
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "../stores/user";
+
+import { useAuthStore } from "../stores/auth";
 const router = useRouter();
-const userStore = useUserStore();
+// const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const loginData = reactive({
   email: "",
   password: "",
 });
 
-const handleLogin = () => {
-  console.log(userStore.loggedInUser, userStore.loggedInUser.value);
+const handleLogin = async () => {
+  // console.log(userStore.loggedInUser, userStore.loggedInUser.value);
 
-  if (userStore.logIn(loginData.email, loginData.password)) {
+  // if (userStore.logIn(loginData.email, loginData.password)) {
+  //   router.push("/products");
+  // }
+  try {
+    await authStore.signIn(loginData.email, loginData.password);
+    console.log(authStore.user, "signeduser");
     router.push("/products");
+  } catch (err) {
+    console.log(err);
   }
+
+  loginData.email = "";
+  loginData.password = "";
 };
 </script>
 
@@ -32,7 +43,7 @@ const handleLogin = () => {
           id="email"
           required
           v-model="loginData.email"
-          :class="{ error: userStore.error }"
+          :class="{ error: authStore.error }"
         />
       </div>
       <div class="form-group">
@@ -43,9 +54,9 @@ const handleLogin = () => {
           required
           placeholder="Enter your password"
           v-model="loginData.password"
-          :class="{ error: userStore.error }"
+          :class="{ error: authStore.error }"
         />
-        <small>{{ userStore.error }}</small>
+        <small>{{ authStore.error }}</small>
       </div>
       <button class="login-btn" type="submit">Login</button>
     </form>

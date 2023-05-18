@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 import { useUserStore } from "../stores/user";
 
 const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const userData = ref({
   name: "",
@@ -14,7 +16,7 @@ const error = ref("");
 
 const router = useRouter();
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (
     !userData.value.name ||
     !userData.value.email ||
@@ -26,12 +28,24 @@ const handleSubmit = () => {
     return;
   }
 
-  userStore.signUp(userData.value);
-  userStore.error = "";
+  // userStore.signUp(userData.value);
+  // userStore.error = "";
+  try {
+    await authStore.signUp(
+      userData.value.email,
+      userData.value.password,
+      userData.value.name
+    );
+
+    router.push("/products");
+  } catch (err) {
+    console.log(err.message);
+  }
+
   userData.value.email = "";
   userData.value.name = "";
   userData.value.password = "";
-  router.push("/products");
+  console.log(authStore.user, "user");
 };
 
 const validateEmail = (email) => {
