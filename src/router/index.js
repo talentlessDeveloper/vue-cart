@@ -4,6 +4,7 @@ import SignUp from "../views/SignUpView.vue";
 import SignIn from "../views/SignInView.vue";
 import Header from "../layout/Header.vue";
 import NotFoundView from "../views/NotFoundView.vue";
+import { useAuthStore } from "../stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,7 +55,13 @@ const router = createRouter({
   ],
 });
 
-const isAuthenticated = () => localStorage.getItem("glass-token");
+// const isAuthenticated = () => localStorage.getItem("glass-token");
+const isAuthenticated = () => {
+  const authStore = useAuthStore();
+
+  if (authStore.user) return true;
+  return false;
+};
 
 const canUserAccess = (to) => {
   if (!isAuthenticated() && to.meta.authIsRequired && to.name !== "sign-in") {
@@ -65,6 +72,7 @@ const canUserAccess = (to) => {
 };
 
 router.beforeEach(async (to, from) => {
+  // const authStore = useAuthStore();
   const canAccess = await canUserAccess(to);
 
   if (isAuthenticated() && to.name === "sign-in") {
