@@ -1,18 +1,18 @@
 <script setup>
-import { ref, computed } from "vue";
-import { RouterLink, RouterView, useRoute, useRouter } from "vue-router";
-import { useUserStore } from "../stores/user";
+import { ref } from "vue";
+import { RouterLink, RouterView, useRouter } from "vue-router";
+import { useAuthStore } from "../stores/auth";
 
 import HeaderMenuVue from "../layout/HeaderMenu.vue";
 import Avatar from "../components/Avatar.vue";
 
 import { useLoggedInUser } from "../composable/getUser";
 
-const userStore = useUserStore();
+const authStore = useAuthStore();
 const openMenu = ref(false);
 const router = useRouter();
 
-const { user } = useLoggedInUser();
+const { isAuthenticated } = useLoggedInUser();
 
 // const username = computed(() => {
 //   if (user.value.name) {
@@ -21,9 +21,7 @@ const { user } = useLoggedInUser();
 // });
 
 const handleLogOut = () => {
-  userStore.user = null;
-  userStore.logOut();
-  console.log(userStore.user);
+  authStore.signOut();
   router.push("/sign-in");
 };
 </script>
@@ -36,9 +34,6 @@ const handleLogOut = () => {
       </RouterLink>
 
       <ul class="nav-ul">
-        <li>
-          <RouterLink to="./sign-in">Sign in</RouterLink>
-        </li>
         <!-- <li>
           <RouterLink to="sign-up">Sign up</RouterLink>
         </li> -->
@@ -46,18 +41,23 @@ const handleLogOut = () => {
           <RouterLink to="products">Products</RouterLink>
         </li>
 
-        <li v-if="user">
+        <li v-if="isAuthenticated">
           <button @click="handleLogOut" class="logout-btn">LogOut</button>
         </li>
-        <li v-show="user" class="avatar">
-          <p>Hi {{ user ? user.name : "" }}</p>
+        <li v-else>
+          <RouterLink to="/sign-in">Sign in</RouterLink>
+        </li>
+        <li v-show="isAuthenticated" class="avatar">
+          <p>
+            Hi {{ isAuthenticated ? authStore.user?.displayName || "" : "" }}
+          </p>
           <Avatar />
         </li>
       </ul>
       <div class="avatar-mobile">
-        <div v-show="user" class="avatar">
+        <div v-show="isAuthenticated" class="avatar">
           <p :class="{ open: openMenu === true }">
-            Hi {{ user ? user.name : "" }}
+            Hi {{ isAuthenticated ? authStore.user?.displayName || "" : "" }}
           </p>
           <Avatar />
         </div>
