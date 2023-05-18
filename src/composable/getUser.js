@@ -1,13 +1,13 @@
 import { storeToRefs } from "pinia";
-import { useUserStore } from "../stores/user";
+import { useAuthStore } from "../stores/auth";
+import { computed, onMounted } from "vue";
 
 export function useLoggedInUser() {
-  const userStore = useUserStore();
-  const { user, loggedInUser, loggedIn } = storeToRefs(userStore);
+  const authStore = useAuthStore();
+  const isAuthenticated = computed(() => !!authStore.user);
+  onMounted(() => {
+    authStore.initializeAuth();
+  });
 
-  if (loggedInUser.value && loggedIn.value) {
-    user.value = loggedInUser.value;
-  }
-
-  return { user };
+  return { isAuthenticated };
 }
