@@ -1,10 +1,10 @@
 <script setup>
-import { useRoute } from "vue-router";
+// import { useRoute } from "vue-router";
 import { useLoggedInUser } from "../composable/getUser";
 
-const { user } = useLoggedInUser();
+const { isAuthenticated } = useLoggedInUser();
 
-const route = useRoute();
+// const route = useRoute();
 const props = defineProps(["openMenu", "logOut"]);
 const emit = defineEmits(["close-menu"]);
 const handleEmit = () => {
@@ -19,17 +19,17 @@ const handleLogOut = () => {
 
 <template>
   <ul class="nav-menu-ul" :class="{ open: props.openMenu === true }">
-    <li @click="handleEmit">
-      <RouterLink to="./sign-in">Sign in</RouterLink>
-    </li>
-    <li @click="handleEmit">
+    <!-- <li @click="handleEmit">
       <RouterLink to="sign-up">Sign up</RouterLink>
-    </li>
+    </li> -->
     <li @click="handleEmit">
       <RouterLink to="products">Products</RouterLink>
     </li>
-    <li v-if="user">
+    <li v-if="isAuthenticated">
       <button @click="handleLogOut" class="logout-btn">LogOut</button>
+    </li>
+    <li v-else @click="handleEmit">
+      <RouterLink to="/sign-in">Sign in</RouterLink>
     </li>
   </ul>
 </template>
