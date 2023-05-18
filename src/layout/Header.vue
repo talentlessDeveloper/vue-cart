@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 
@@ -24,6 +24,17 @@ const handleLogOut = () => {
   authStore.signOut();
   router.push("/sign-in");
 };
+
+watch(
+  () => openMenu.value,
+  (newValue) => {
+    if (newValue) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+  }
+);
 </script>
 
 <template>
