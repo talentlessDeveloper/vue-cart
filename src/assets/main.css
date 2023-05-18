@@ -88,6 +88,10 @@ a {
   margin: 0 auto;
 }
 
+.no-scroll {
+  overflow-y: hidden;
+}
+
 .global-user {
   position: absolute;
   top: 10px;
