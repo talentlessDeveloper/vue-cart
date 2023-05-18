@@ -1,21 +1,17 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import LoaderVue from "../components/LoaderVue.vue";
-import { useLoggedInUser } from "../composable/getUser";
+
 import { useProductsStore } from "../stores/products";
 import { useUserStore } from "../stores/user";
 
 const productsStore = useProductsStore();
-const { username } = useLoggedInUser();
 const { productsData, loading } = storeToRefs(productsStore);
 const userStore = useUserStore();
-
-console.log(userStore.user, userStore.loggedInUser);
 
 productsStore.getProducts();
 </script>
 <template>
-  <div class="global-user">{{ username }}</div>
   <div v-if="loading">
     <LoaderVue />
   </div>
