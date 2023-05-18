@@ -23,7 +23,6 @@ export const useAuthStore = defineStore("auth", () => {
       );
       const currentUser = userCredential.user;
 
-      console.log(user.value);
       error.value = null;
 
       updateProfile(auth.currentUser, {
@@ -38,7 +37,6 @@ export const useAuthStore = defineStore("auth", () => {
     } catch (err) {
       user.value = null;
       error.value = err.message;
-      console.log(err.message);
     }
   };
 
