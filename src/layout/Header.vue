@@ -1,12 +1,12 @@
 <script setup>
-import { ref, watch } from "vue";
-import { RouterLink, RouterView, useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth";
+import { ref, watch } from 'vue';
+import { RouterLink, RouterView, useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
 
-import HeaderMenuVue from "../layout/HeaderMenu.vue";
-import Avatar from "../components/Avatar.vue";
+import HeaderMenuVue from '../layout/HeaderMenu.vue';
+import Avatar from '../components/Avatar.vue';
 
-import { useLoggedInUser } from "../composable/getUser";
+import { useLoggedInUser } from '../composable/getUser';
 
 const authStore = useAuthStore();
 const openMenu = ref(false);
@@ -22,16 +22,18 @@ const { isAuthenticated } = useLoggedInUser();
 
 const handleLogOut = () => {
   authStore.signOut();
-  router.push("/sign-in");
+  router.push('/sign-in');
 };
+
+console.log(authStore.user);
 
 watch(
   () => openMenu.value,
   (newValue) => {
     if (newValue) {
-      document.body.classList.add("no-scroll");
+      document.body.classList.add('no-scroll');
     } else {
-      document.body.classList.remove("no-scroll");
+      document.body.classList.remove('no-scroll');
     }
   }
 );
@@ -60,7 +62,7 @@ watch(
         </li>
         <li v-show="isAuthenticated" class="avatar">
           <p>
-            Hi {{ isAuthenticated ? authStore.user?.displayName || "" : "" }}
+            Hi {{ isAuthenticated ? authStore.user?.displayName || '' : '' }}
           </p>
           <Avatar />
         </li>
@@ -68,7 +70,7 @@ watch(
       <div class="avatar-mobile">
         <div v-show="isAuthenticated" class="avatar">
           <p :class="{ open: openMenu === true }">
-            Hi {{ isAuthenticated ? authStore.user?.displayName || "" : "" }}
+            Hi {{ isAuthenticated ? authStore.user?.displayName || '' : '' }}
           </p>
           <Avatar />
         </div>

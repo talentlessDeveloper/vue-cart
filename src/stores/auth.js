@@ -1,20 +1,22 @@
 // src/store/auth.js
-import { defineStore } from "pinia";
-import { auth, db } from "../config";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
+import { auth, db, googleProvider } from '../config';
+import { ref } from 'vue';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   updateProfile,
-} from "firebase/auth";
-import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+} from 'firebase/auth';
+import { setDoc, doc, serverTimestamp, getDoc } from 'firebase/firestore';
 
-export const useAuthStore = defineStore("auth", () => {
+export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);
-  const error = ref(null);
+  const errorF = ref(null);
 
   const signUp = async (email, password, name) => {
+    errorF.value = null;
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -23,7 +25,7 @@ export const useAuthStore = defineStore("auth", () => {
       );
       const currentUser = userCredential.user;
 
-      error.value = null;
+      errorF.value = null;
 
       updateProfile(auth.currentUser, {
         displayName: name,
@@ -33,14 +35,15 @@ export const useAuthStore = defineStore("auth", () => {
 
       const formCopy = { email, name, timestamp: serverTimestamp() };
 
-      await setDoc(doc(db, "users", currentUser.uid), formCopy);
+      await setDoc(doc(db, 'users', currentUser.uid), formCopy);
     } catch (err) {
       user.value = null;
-      error.value = err.message;
+      errorF.value = err.message;
     }
   };
 
   const signIn = async (email, password) => {
+    errorF.value = null;
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -50,11 +53,11 @@ export const useAuthStore = defineStore("auth", () => {
       const currentUser = userCredential.user;
       if (currentUser) {
         user.value = currentUser;
-        error.value = null;
+        errorF.value = null;
       }
-    } catch (error) {
+    } catch (errorF) {
       user.value = null;
-      error.value = error.message;
+      errorF.value = errorF.message;
     }
   };
 
@@ -73,17 +76,48 @@ export const useAuthStore = defineStore("auth", () => {
         }
       } catch (err) {
         user.value = null;
-        console.error(err.message);
+        console.errorF(err.message);
       }
     });
   };
 
+  const signWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const userData = result.user;
+      user.value = userData;
+
+      // check for user
+      const docRef = doc(db, 'users', userData.uid);
+      const docSnap = await getDoc(docRef);
+
+      // if !user , create user
+      if (!docSnap.exists()) {
+        await setDoc(docRef, {
+          name: userData.displayName,
+          email: userData.email,
+          timestamp: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+
+    // try {
+    //   const result = await signInWithPopup(auth, googleProvider);
+    //   user.value = result;
+    // } catch (err) {
+    //   console.log(err.message);
+    // }
+  };
+
   return {
     user,
-    error,
+    errorF,
     signUp,
     signIn,
     signOut,
     initializeAuth,
+    signWithGoogle,
   };
 });

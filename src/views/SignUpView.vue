@@ -1,18 +1,24 @@
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth";
-import { useUserStore } from "../stores/user";
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth';
+import { useUserStore } from '../stores/user';
 
-const userStore = useUserStore();
+import GoogleSignUp from '../components/GoogleSignUp.vue';
+
+// const userStore = useUserStore();
 const authStore = useAuthStore();
 
 const userData = ref({
-  name: "",
-  email: "",
-  password: "",
+  name: '',
+  email: '',
+  password: '',
 });
-const error = ref("");
+const error = ref({
+  password: '',
+  email: '',
+  name: '',
+});
 
 const router = useRouter();
 
@@ -22,9 +28,15 @@ const handleSubmit = async () => {
     !userData.value.email ||
     !userData.value.password
   ) {
+    error.value.password = 'Ensure all fields are not  empty';
     return;
   }
   if (!validateEmail(userData.value.email)) {
+    return;
+  }
+
+  if (userData.value.password.length < 6) {
+    error.value.password = 'Password must be at least 6 characters';
     return;
   }
 
@@ -37,15 +49,20 @@ const handleSubmit = async () => {
       userData.value.name
     );
 
-    router.push("/products");
+    router.push('/products');
+    error.value = {
+      name: '',
+      password: '',
+      email: '',
+    };
   } catch (err) {
     console.log(err.message);
   }
 
-  userData.value.email = "";
-  userData.value.name = "";
-  userData.value.password = "";
-  console.log(authStore.user, "user");
+  userData.value.email = '';
+  userData.value.name = '';
+  userData.value.password = '';
+  console.log(authStore.user, 'user');
 };
 
 const validateEmail = (email) => {
@@ -53,10 +70,10 @@ const validateEmail = (email) => {
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
   if (email.match(validRegex)) {
-    error.value = "";
+    error.value.email = '';
     return true;
   } else {
-    error.value = "Invalid email address";
+    error.value.email = 'Invalid email address';
     return false;
   }
 };
@@ -85,21 +102,24 @@ const validateEmail = (email) => {
           required
           v-model="userData.email"
           @change="validateEmail(userData.email)"
-          :class="{ error: error }"
+          :class="{ error: error.email }"
         />
-        <small>{{ error }}</small>
+        <small>{{ error.email }}</small>
       </div>
       <div class="form-group">
         <label for="password">Password</label>
         <input
           type="password"
           id="password"
-          placeholder="e.g AdaLovelace?$"
+          placeholder="at least 6 characters"
           required
           v-model="userData.password"
+          :class="{ error: error.password }"
         />
+        <small>{{ error.password }}</small>
       </div>
       <button>Sign Up</button>
+      <GoogleSignUp label="up" />
     </form>
   </main>
 </template>

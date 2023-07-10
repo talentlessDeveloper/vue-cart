@@ -1,15 +1,17 @@
 <script setup>
-import { reactive } from "vue";
-import { useRouter } from "vue-router";
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 
-import { useAuthStore } from "../stores/auth";
+import GoogleSignUp from '../components/GoogleSignUp.vue';
+
+import { useAuthStore } from '../stores/auth';
 const router = useRouter();
 // const userStore = useUserStore();
 const authStore = useAuthStore();
 
 const loginData = reactive({
-  email: "",
-  password: "",
+  email: '',
+  password: '',
 });
 
 const handleLogin = async () => {
@@ -20,14 +22,13 @@ const handleLogin = async () => {
   // }
   try {
     await authStore.signIn(loginData.email, loginData.password);
-    console.log(authStore.user, "signeduser");
-    router.push("/products");
+    router.push('/products');
   } catch (err) {
     console.log(err);
   }
 
-  loginData.email = "";
-  loginData.password = "";
+  loginData.email = '';
+  loginData.password = '';
 };
 </script>
 
@@ -43,7 +44,7 @@ const handleLogin = async () => {
           id="email"
           required
           v-model="loginData.email"
-          :class="{ error: authStore.error }"
+          :class="{ error: authStore.errorF }"
         />
       </div>
       <div class="form-group">
@@ -54,11 +55,12 @@ const handleLogin = async () => {
           required
           placeholder="Enter your password"
           v-model="loginData.password"
-          :class="{ error: authStore.error }"
+          :class="{ error: authStore.errorF }"
         />
         <small>{{ authStore.error }}</small>
       </div>
       <button class="login-btn" type="submit">Login</button>
+      <GoogleSignUp label="in" />
     </form>
     <div class="login">
       <p>Don't Have an account?</p>
